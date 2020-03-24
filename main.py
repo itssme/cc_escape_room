@@ -3,6 +3,7 @@ import serial
 LED_ON = 0xf7c03f
 
 FERN_ON = 0xE0E040BF
+FERN_PLAY = 0xE0E0E21D
 FERN_0 = 0xE0E08877
 FERN_1 = 0xE0E020DF
 FERN_2 = 0xE0E0A05F
@@ -57,10 +58,15 @@ def parse_fern_nums(content):
             return i
 
 
+# rot, gelb, grün, blau
+# 8325 Papier halb bedruckt
+# 5373 Foto drucken
+# 9251 Fenster
+
 def main():
     reader = serial.Serial('/dev/ttyACM0', 9600)
 
-    simple_code = CodeChecker("382")
+    simple_code = CodeChecker("9251")
     last_fern_parsed = None
 
     while reader.isOpen():
@@ -78,6 +84,8 @@ def main():
             print("LED_ON")
         elif content == FERN_ON:
             print("FERN_ON")
+        elif content == FERN_PLAY:
+            print("FERN_PLAY")
 
         if content in FERN_NUMBERS:
             number = str(parse_fern_nums(content))
@@ -89,6 +97,7 @@ def main():
                 print("Code checker: " + str(result))
 
                 if result:
+                    # os.system("lp -d MFCJ5320DW 100\ cells\ diameter\ theta\ maze.pdf")
                     print("RIGHT CODE")
 
     print("CLOSED")
